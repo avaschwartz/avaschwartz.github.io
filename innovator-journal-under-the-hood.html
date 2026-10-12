@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Innovator Journal: Under the Hood</title>
+<style>
+  :root {
+    --accent: #4a6fa5;
+    --accent-dark: #334e75;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #2d3436;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: #fff;
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin: 0.5rem 0 0;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  main {
+    max-width: 800px;
+    margin: -1.5rem auto 3rem;
+    padding: 0 1rem;
+  }
+  section {
+    background: var(--card);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.4rem;
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  code {
+    background: #eef1f6;
+    color: #c0392b;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+  }
+  em { color: var(--accent-dark); }
+  footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    padding-bottom: 2rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>Innovator Journal: Under the Hood</h1>
+  <p>My Catch the Falling Blocks Game</p>
+</header>
+<main>
+
+<section>
+  <h2>How I Created My Game</h2>
+  <p>I started by asking AI to write a complete HTML file for a simple browser game. I asked it to include HTML, CSS, and JavaScript in the same file, use the HTML5 canvas to draw the game, and focus on one main mechanic. I also asked for comments explaining the setup, game loop, input handling, collision detection, and scoring.</p>
+  <p>The AI suggested a game called <em>Catch the Falling Blocks</em>. In this game, the player moves a paddle to catch blocks falling from the top of the screen. I used this game to investigate how HTML, CSS, and JavaScript work together to create an interactive game.</p>
+</section>
+
+<section>
+  <h2>1. The Canvas</h2>
+  <p>The canvas is the area where the game is drawn. In HTML, it is created using the <code>&lt;canvas&gt;</code> tag. JavaScript uses the canvas to draw the paddle and falling blocks and update their positions as the game runs.</p>
+  <p>The canvas has a width and height that determine the size of the playing area. If I change the width, the game area becomes wider or narrower. If I change the height, the playing area becomes taller or shorter. I would also need to check whether the game&rsquo;s movement and collision calculations depend on the original dimensions.</p>
+</section>
+
+<section>
+  <h2>2. The State Variables</h2>
+  <p>State variables store the information the game needs while it is running. These can include the paddle&rsquo;s position, the falling block&rsquo;s position, the block&rsquo;s speed, the player&rsquo;s score, and whether the game is over.</p>
+  <p>These values are declared in the JavaScript section, usually using <code>let</code> or <code>const</code>. Variables that change during gameplay generally need to be updated as the game progresses. For example, the block&rsquo;s position changes as it falls, and the score changes when the player catches a block.</p>
+</section>
+
+<section>
+  <h2>3. The Game Loop</h2>
+  <p>The game loop is responsible for keeping the game running. My game uses a repeating process to update the game and draw the current scene on the canvas.</p>
+  <p>A common way to repeat this process is with <code>requestAnimationFrame()</code>, which asks the browser to run the next animation frame. Another possible method is <code>setInterval()</code>, which repeats a function at a set time interval.</p>
+  <p>Each time the game loop runs, it updates the positions of objects and redraws the game. This creates the appearance of movement and allows the game to respond to what is happening.</p>
+</section>
+
+<section>
+  <h2>4. Input Handling</h2>
+  <p>Input handling allows the player to control the game using the keyboard. In a game like Catch the Falling Blocks, the player uses keys to move the paddle left and right.</p>
+  <p>JavaScript can detect keyboard input using an event listener, such as <code>addEventListener("keydown", ...)</code>. When the player presses a control key, the code responds by changing a value or setting a direction that affects the paddle&rsquo;s movement.</p>
+  <p>This connects the player's actions to what happens on the screen and makes the game interactive.</p>
+</section>
+
+<section>
+  <h2>5. Collision / Win-Lose Logic</h2>
+  <p>Collision detection allows the game to check whether the falling block has touched the paddle or reached the bottom of the playing area. JavaScript does this by comparing the positions of objects using conditions inside <code>if</code> statements.</p>
+  <p>For example, the code may compare the block&rsquo;s position with the paddle&rsquo;s position to determine whether they overlap. If the block is caught, the game can increase the score. If the block reaches the bottom without being caught, the game may end.</p>
+  <p>The exact comparison determines what happens next, so even a small change to a condition can affect how the game behaves.</p>
+</section>
+
+<section>
+  <h2>6. Scoring</h2>
+  <p>The score keeps track of how many blocks the player catches successfully. It is usually stored in a JavaScript variable, such as <code>score</code>, and displayed on the screen.</p>
+  <p>When the player catches a block, the code can increase the score using an expression such as <code>score++</code> or <code>score += 1</code>. The game then updates the displayed score so the player can see their progress.</p>
+  <p>This rewards the player for successfully completing the main task of the game.</p>
+</section>
+
+<section>
+  <h2>My Reflection</h2>
+  <p>Creating this game helped me understand that a browser game is made up of several parts working together. HTML provides the structure, CSS controls the appearance, and JavaScript controls the game's behavior. The canvas provides the space for drawing, variables store information, and the game loop updates the action.</p>
+  <p>I also learned that keyboard input, collision detection, and scoring depend on conditions and calculations in the code. By finding these sections, I can better understand how the game works and how changing the code might change the player's experience.</p>
+</section>
+
+<section>
+  <h2>My Next Step</h2>
+  <p>If I were to improve my understanding of the game, I would experiment with changing the canvas dimensions, the block's speed, and the scoring rules. I would change one thing at a time and observe how it affects the game. This would help me learn through testing instead of only reading the code.</p>
+</section>
+
+</main>
+<footer>Innovator Journal &mdash; Under the Hood</footer>
+</body>
+</html>
