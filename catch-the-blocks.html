@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Catch the Blocks</title>
+<style>
+  /* ===== BASIC PAGE STYLING ===== */
+  body {
+    margin: 0;
+    background: #1a1a2e;
+    color: #fff;
+    font-family: Arial, sans-serif;
+    text-align: center;
+  }
+  h1 {
+    margin: 15px 0 5px 0;
+  }
+  #scoreBoard {
+    font-size: 20px;
+    margin-bottom: 10px;
+  }
+  canvas {
+    background: #0f0f1a;
+    border: 3px solid #4cc9f0;
+    display: block;
+    margin: 0 auto;
+  }
+  #instructions {
+    margin-top: 10px;
+    font-size: 14px;
+    color: #aaaaaa;
+  }
+</style>
+</head>
+<body>
+
+<h1>Catch the Blocks</h1>
+<div id="scoreBoard">Score: <span id="scoreValue">0</span> | Lives: <span id="livesValue">3</span></div>
+<canvas id="gameCanvas" width="480" height="500"></canvas>
+<div id="instructions">Use LEFT / RIGHT arrow keys (or A / D) to move the paddle. Catch falling blocks to score points. Missing 3 blocks ends the game.</div>
+
+<script>
+/* ============================================================
+   SECTION 1: SETUP
+   Here we grab references to our canvas/HTML elements and
+   define the core variables and objects the game will use.
+   ============================================================ */
+
+const canvas = document.getElementById("gameCanvas");
+const ctx = canvas.getContext("2d");
+
+const scoreDisplay = document.getElementById("scoreValue");
+const livesDisplay = document.getElementById("livesValue");
+
+// The player's paddle
+const paddle = {
+  width: 90,
+  height: 15,
+  x: canvas.width / 2 - 45,   // start centered
+  y: canvas.height - 30,
+  speed: 7,
+  dx: 0                       // current horizontal movement direction (-1, 0, 1)
+};
+
+// The falling block (only one on screen at a time = single core mechanic)
+const block = {
+  size: 20,
+  x: Math.random() * (canvas.width - 20),
+  y: -20,
+  speed: 3
+};
+
+// Game state variables
+let score = 0;
+let lives = 3;
+let gameOver = false;
+
+/* ============================================================
+   SECTION 2: INPUT HANDLING
+   We listen for keydown/keyup events to control the paddle.
+   Using "keydown" + "keyup" (rather than reading keys once)
+   lets the paddle move smoothly while a key is held down.
+   ============================================================ */
+
+document.addEventListener("keydown", (e) => {
+  if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") {
+    paddle.dx = -paddle.speed;
+  } else if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") {
+    paddle.dx = paddle.speed;
+  }
+});
+
+document.addEventListener("keyup", (e) => {
+  // Stop moving when the relevant key is released
+  if (
+    e.key === "ArrowLeft" || e.key === "a" || e.key === "A" ||
+    e.key === "ArrowRight" || e.key === "d" || e.key === "D"
+  ) {
+    paddle.dx = 0;
+  }
+});
+
+/* ============================================================
+   SECTION 3: UPDATE LOGIC (movement + collision detection)
+   This section moves the paddle and the falling block each
+   frame, then checks whether they have collided (a "catch")
+   or whether the block has reached the bottom (a "miss").
+   ============================================================ */
+
+function update() {
+  // --- Move the paddle, but keep it within the canvas bounds ---
+  paddle.x += paddle.dx;
+  if (paddle.x < 0) paddle.x = 0;
+  if (paddle.x + paddle.width > canvas.width) {
+    paddle.x = canvas.width - paddle.width;
+  }
+
+  // --- Move the falling block downward ---
+  block.y += block.speed;
+
+  // --- COLLISION DETECTION ---
+  // We use simple rectangle (AABB) collision: check if the block's
+  // bounding box overlaps the paddle's bounding box.
+  const caughtByPaddle =
+    block.y + block.size >= paddle.y &&              // block bottom reaches paddle top
+    block.x + block.size >= paddle.x &&               // block right edge passes paddle left edge
+    block.x <= paddle.x + paddle.width &&              // block left edge is before paddle right edge
+    block.y + block.size <= paddle.y + paddle.height;  // block hasn't fallen past the paddle
+
+  if (caughtByPaddle) {
+    // ---- SCORING ----
+    score += 10;
+    scoreDisplay.textContent = score;
+    resetBlock();
+    // Slightly increase difficulty each time a block is caught
+    block.speed += 0.15;
+  } else if (block.y > canvas.height) {
+    // Block fell past the paddle: lose a life
+    lives -= 1;
+    livesDisplay.textContent = lives;
+    resetBlock();
+
+    if (lives <= 0) {
+      gameOver = true;
+    }
+  }
+}
+
+// Reset the block to a random x position at the top of the screen
+function resetBlock() {
+  block.x = Math.random() * (canvas.width - block.size);
+  block.y = -block.size;
+}
+
+/* ============================================================
+   SECTION 4: RENDERING
+   Draws the current state of the game (paddle, block, text)
+   onto the canvas. Called once per frame after update().
+   ============================================================ */
+
+function draw() {
+  // Clear the canvas before drawing the next frame
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Draw the paddle
+  ctx.fillStyle = "#4cc9f0";
+  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+
+  // Draw the falling block
+  ctx.fillStyle = "#f72585";
+  ctx.fillRect(block.x, block.y, block.size, block.size);
+
+  // If the game has ended, show a message overlay
+  if (gameOver) {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "#ffffff";
+    ctx.font = "32px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 10);
+
+    ctx.font = "20px Arial";
+    ctx.fillText("Final Score: " + score, canvas.width / 2, canvas.height / 2 + 25);
+    ctx.fillText("Refresh the page to play again", canvas.width / 2, canvas.height / 2 + 55);
+  }
+}
+
+/* ============================================================
+   SECTION 5: THE GAME LOOP
+   requestAnimationFrame repeatedly calls gameLoop(), creating
+   smooth animation. Each cycle: update positions/state, then
+   redraw everything. The loop stops once gameOver is true.
+   ============================================================ */
+
+function gameLoop() {
+  if (!gameOver) {
+    update();
+  }
+  draw();
+
+  // Keep looping unless the game has ended
+  if (!gameOver) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
+// Start the game loop
+gameLoop();
+</script>
+
+</body>
+</html>
