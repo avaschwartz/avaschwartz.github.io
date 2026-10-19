@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One SHot Game</title>
+<style>
+  :root {
+    --accent: #4a6fa5;
+    --accent-dark: #334e75;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #2d3436;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: #fff;
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin: 0.5rem 0 0;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  main {
+    max-width: 800px;
+    margin: -1.5rem auto 3rem;
+    padding: 0 1rem;
+  }
+  section {
+    background: var(--card);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.4rem;
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  code {
+    background: #eef1f6;
+    color: #c0392b;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+  }
+  em { color: var(--accent-dark); }
+  footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    padding-bottom: 2rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1> Unit 3: One Shot Game</h1>
+  <p>My Catch the Falling Blocks Game</p>
+</header>
+<main>
+
+<section>
+ <h2>Game Link</h2>
+ <a href="put game link">
+  Play Catch the Blocks
+</a>
+</section>
+
+<section>
+  <h2>Goal</h2>
+  <p>My goal was to modify my original Piano Tiles game so that it would play a specific tune instead of making random notes. I wanted to make the game more interesting and musical while keeping the original gameplay and keyboard controls.<p/>
+</section>
+
+<section>
+  <h2>Process:</h2>
+  <p>Orginal prompt: <code>Can you make me a downloadable Piano Tiles game that I can play using my keyboard? Make it colorful and interactive, with falling tiles, a score counter, sound effects, and restart controls. Then change it so the tiles play a Soda Pop-inspired tune instead of random notes.</code></p>
+  <p>First, I started with my existing Piano Tiles game, which was made using HTML, CSS, and JavaScript. The game already had falling tiles, a score counter, sound effects, and keyboard controls (A, S, D, and F).
+  <p>Next, I looked at how the game created tiles and played sounds. Originally, the tiles appeared in random lines, so the notes were also random. I changed the code so that the tiles would follow a set order instead. Each lane represented a different musical note, and pressing the correct key played that note. But I still kept the original design, scoring system, restart button, and sound toggle so the game would still be easy to play.</p>
+  <p>Final Prompt:<code>Make me a downloadable Piano Tiles game that plays a Soda Pop-inspired tune and can be controlled with my keyboard.</code></p>
+</section>
+
+<section>
+  <h2>Challenges:</h2>
+  <p>One challenge was changing the tile system from random generation to a fixed sequence. I needed to make sure the game reset the sequence when a new game started and the tune could continue from the middle when restarting.</p>
+  <p>Another important part was connecting the correct keyboard controls to the notes. I kept the four controls A, S, D, and F, with each key representing one line.</p>
+</section>
+
+<section>
+  <h2>Final Result:</h2>
+  <p>I created an updated version of Piano Tiles called Soda Pop Tiles. The game uses a repeating sequence of notes instead of random notes. Players can use the keyboard or click the tiles to play, earn points, and try to beat their best score.</p>
+</section>
+
+<section>
+  <h2>What I Learned:</h2>
+  <p>This project helped me understand how JavaScript can control both gameplay and sound. I learned that changing a small part of the code, such as how tiles are generated, can change the entire experience of a game. I also learned how programming can combine music, timing, and interaction to make a project more engaging.</p>
+</section> 
+
+<section>
+  <h2>Next Steps:</h2>
+  <p>If I continued working on this project, I would improve the timing between the notes, add difficulty levels, and make the melody more recognizable. I would also want to try to use the app “Devin” to organize my code better and get help on how to fix it from the built-in AI agent.</p>
+</section> 
+
+</html>
