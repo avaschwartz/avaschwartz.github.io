@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>One SHot Game</title>
+<style>
+  :root {
+    --accent: #4a6fa5;
+    --accent-dark: #334e75;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #2d3436;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: #fff;
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin: 0.5rem 0 0;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  main {
+    max-width: 800px;
+    margin: -1.5rem auto 3rem;
+    padding: 0 1rem;
+  }
+  section {
+    background: var(--card);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.4rem;
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  code {
+    background: #eef1f6;
+    color: #c0392b;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+  }
+  em { color: var(--accent-dark); }
+  footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    padding-bottom: 2rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1> Unit 2: 3d Scanner</h1>
+  <p>Using Stepper Motors with Arduino</p></p>
+</header>
+<main>
+
+<section>
+ <h2>Objective:</h2>
+ <p>The goal of this stage of my innovation project was to connect a NEMA 17 stepper motor to an Arduino and create a working prototype that could control the motor's rotation. I wanted to understand how hardware components, electrical connections, and software work together to produce a physical movement. I also wanted to build a foundation that I could use in future projects. </p>
+</section>
+
+<section>
+  <h2>Process:</h2>
+  <p>Youtube Tutorial Link: https://www.youtube.com/watch?v=wcLeXXATCR4&t=657s</p>
+  <p>  
+1. Research: I researched my YEJMKJ NEMA 17 stepper motor and learned which components I needed to connect it to an Arduino.
+2. Gather materials: I gathered my Arduino Uno, A4988 motor driver, breadboard, jumper wires, and external power supply.
+3. Connect the driver: I placed the A4988 driver on the breadboard and connected its DIR and STEP pins to Arduino pins 2 and 3.
+4. Connect the motor: I connected the motor’s four wires to the driver’s output pins, making sure the wires were paired correctly.
+5. Connect the power: I connected the required power and ground wires and checked the connections before turning on the circuit.
+6. Write the code: I wrote code in the Arduino IDE to send signals to the driver and control the motor’s movement and direction.
+7. Test the motor: I uploaded the code and tested the setup to see if the motor moved as expected.
+</p>
+</section>
+
+<section>
+ <h2>Challenges:</h2>
+  <p>
+In my opinion, the biggest challenge was figuring out the wiring, as it was very different and more difficult than what we had been exploring in earlier classes. 
+One of the main things I learned was that the motor needs a driver instead of being connected directly to the Arduino. I had to understand what the driver does and why the motor needs a separate power supply.
+I also learned that connecting the motor wires correctly is important. If the wires are connected incorrectly, the motor may not rotate as expected.
+This taught me to check the wiring, read the component instructions, and look for possible causes of problems instead of changing connections randomly.
+</p>
+</section>
+
+<section>
+ <h2>Results and Progress:</h2>
+  <p>add photos here</p>
+</section>
+
+<section>
+  <h2>Reflection and Next Steps:</h2>
+  <p>This project helped me improve my skills in electronics, coding, research, and problem-solving. I learned that building a working prototype takes planning, careful wiring, testing, and making improvements.</p>
+  <p>My next steps are to test the motor's movement, check whether it rotates as expected, and see how changing the number of steps affects its rotation. I also want to organize my wiring and save my code and circuit diagrams so I can easily refer to them later.</p>
+  <p>Overall, this stage helped me move from planning my idea to building a physical prototype. I now have a better understanding of how an Arduino can control a stepper motor, and I can use what I learned to continue improving my innovation project.</p>
+</section>
+
+ 
+</main>
+<footer> One Shot Game </footer>
+</body>
+</html>
