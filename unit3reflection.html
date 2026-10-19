@@ -112,6 +112,285 @@
 </section>
 
 <section>
+  <h2>Final Code:</h2>
+  <p><code><!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Piano Tiles — Arcade Game</title>
+<style>
+  :root { --bg:#10101b; --panel:#19192a; --accent:#a78bfa; --cyan:#67e8f9; --text:#f6f5ff; }
+  * { box-sizing: border-box; }
+  body { margin:0; min-height:100vh; background:radial-gradient(ellipse at top,#29204b 0%,#10101b 58%); color:var(--text); font-family:system-ui,-apple-system,Segoe UI,sans-serif; display:flex; justify-content:center; padding:22px 12px; }
+  .app { width:min(100%,540px); }
+  header { text-align:center; margin-bottom:14px; }
+  .eyebrow { color:var(--cyan); text-transform:uppercase; letter-spacing:.18em; font-size:.72rem; font-weight:800; }
+  h1 { margin:5px 0 4px; font-size:clamp(2rem,8vw,3.2rem); letter-spacing:-.05em; }
+  .subtitle { color:#c8c3e6; margin:0; font-size:.92rem; }
+  .hud { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin:15px 0 10px; }
+  .stat { background:#ffffff0d; border:1px solid #ffffff18; border-radius:14px; padding:10px 8px; text-align:center; }
+  .stat small { display:block; color:#bdb8da; font-size:.7rem; text-transform:uppercase; letter-spacing:.1em; }
+  .stat strong { font-size:1.35rem; }
+  .game-shell { position:relative; padding:8px; border-radius:19px; background:linear-gradient(135deg,#a78bfa,#67e8f9,#fb7185); box-shadow:0 18px 55px #0008; }
+  canvas { display:block; width:100%; height:auto; background:#f8f7ff; border-radius:12px; touch-action:manipulation; cursor:pointer; }
+  .overlay { position:absolute; inset:8px; border-radius:12px; background:#10101bdc; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:22px; }
+  .overlay.hidden { display:none; }
+  .overlay h2 { font-size:2rem; margin:0 0 7px; }
+  .overlay p { max-width:290px; color:#d6d1ef; line-height:1.5; margin:0 0 18px; }
+  button { font:inherit; font-weight:800; border:0; border-radius:999px; padding:12px 22px; background:linear-gradient(100deg,var(--accent),var(--cyan)); color:#11111c; cursor:pointer; transition:transform .12s,filter .12s; }
+  button:hover { filter:brightness(1.08); transform:translateY(-1px); }
+  button:active { transform:scale(.98); }
+  .help { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:12px 0; color:#d2cee9; font-size:.82rem; }
+  .key { border:1px solid #ffffff35; background:#ffffff0d; padding:4px 8px; border-radius:7px; color:white; }
+  .bottom { display:grid; grid-template-columns:1fr 1fr; gap:9px; margin-top:12px; }
+  .bottom button { background:#ffffff12; border:1px solid #ffffff20; color:#f6f5ff; }
+  .tip { color:#aaa5c9; font-size:.78rem; text-align:center; line-height:1.5; margin:14px 0 0; }
+  @media (max-width:390px) { body{padding:12px 8px}.stat{padding:8px 4px}.stat strong{font-size:1.1rem}.help{font-size:.75rem} }
+</style>
+</head>
+<body>
+<main class="app">
+  <header>
+    <div class="eyebrow">Arcade mode • rhythm challenge</div>
+    <h1>SODA POP <span style="color:#a78bfa">TILES</span></h1>
+    <p class="subtitle">Play an upbeat, soda-pop-inspired melody. Tap the tiles in time!</p>
+  </header>
+  <section class="hud" aria-label="Game stats">
+    <div class="stat"><small>Score</small><strong id="score">0</strong></div>
+    <div class="stat"><small>Best</small><strong id="best">0</strong></div>
+    <div class="stat"><small>Speed</small><strong id="speed">1×</strong></div>
+  </section>
+  <div class="game-shell">
+    <canvas id="game" width="400" height="600" aria-label="Piano tiles game area"></canvas>
+    <div class="overlay" id="overlay">
+      <h2 id="overlayTitle">Ready to play?</h2>
+      <p id="overlayText">Tap or click the black tiles as they fall. Every correct tile earns a point. Missing one ends the run!</p>
+      <button id="startBtn">Start game</button>
+    </div>
+  </div>
+  <div class="help">
+    <span><span class="key">Click / Tap</span> a tile</span>
+    <span><span class="key">A S D F</span> hit lanes</span>
+    <span><span class="key">Space</span> pause</span>
+  </div>
+  <div class="bottom">
+    <button id="soundBtn">♫ Sound: On</button>
+    <button id="restartBtn">↻ Restart</button>
+  </div>
+  <p class="tip">Tip: The tiles get faster as your score grows. This game works offline in your browser—no install needed.</p>
+</main>
+<script>
+(() => {
+  // SETUP: canvas, lanes, and game state.
+  const canvas = document.getElementById('game');
+  const ctx = canvas.getContext('2d');
+  const scoreEl = document.getElementById('score');
+  const bestEl = document.getElementById('best');
+  const speedEl = document.getElementById('speed');
+  const overlay = document.getElementById('overlay');
+  const overlayTitle = document.getElementById('overlayTitle');
+  const overlayText = document.getElementById('overlayText');
+  const startBtn = document.getElementById('startBtn');
+  const soundBtn = document.getElementById('soundBtn');
+
+  const W = canvas.width, H = canvas.height;
+  const LANES = 4, LANE_W = W / LANES;
+  const TILE_H = 118;
+  let tiles = [];
+  let score = 0;
+  let best = Number(localStorage.getItem('pianoTilesBest') || 0);
+  let running = false;
+  let gameOver = false;
+  let lastTime = 0;
+  let spawnTimer = 0;
+  let spawnEvery = 850;
+  let soundOn = true;
+  let audioCtx = null;
+  let flashLane = -1, flashUntil = 0;
+  bestEl.textContent = best;
+
+  // Original upbeat pop melody sequence, inspired by a bubbly pop vibe.
+  // This is not the exact melody of a released song.
+  const melody = [2, 2, 3, 2, 0, 1, 2, 3, 2, 1, 0, 1, 2, 2, 3, 1,
+                  0, 1, 2, 3, 3, 2, 1, 2, 0, 2, 3, 2, 1, 0, 1, 2];
+  let melodyIndex = 0;
+
+  // Add the next note of the melody at the top.
+  function spawnTile() {
+    const lane = melody[melodyIndex % melody.length];
+    melodyIndex++;
+    tiles.push({ lane, y: -TILE_H, hit: false });
+  }
+
+  // DRAW / RENDER: clear the canvas and draw lane lines and tiles.
+  function draw(now = 0) {
+    ctx.clearRect(0, 0, W, H);
+    ctx.fillStyle = '#f8f7ff';
+    ctx.fillRect(0, 0, W, H);
+    for (let lane = 0; lane < LANES; lane++) {
+      ctx.fillStyle = lane % 2 ? '#eeedf7' : '#f8f7ff';
+      ctx.fillRect(lane * LANE_W, 0, LANE_W, H);
+      if (lane > 0) {
+        ctx.strokeStyle = '#d6d2e8';
+        ctx.lineWidth = 2;
+        ctx.beginPath(); ctx.moveTo(lane * LANE_W, 0); ctx.lineTo(lane * LANE_W, H); ctx.stroke();
+      }
+    }
+    // A brief color flash shows which lane was tapped.
+    if (now < flashUntil && flashLane >= 0) {
+      ctx.fillStyle = '#a78bfa44';
+      ctx.fillRect(flashLane * LANE_W, 0, LANE_W, H);
+    }
+    for (const tile of tiles) {
+      if (tile.hit) continue;
+      const x = tile.lane * LANE_W + 6;
+      ctx.fillStyle = '#171725';
+      ctx.beginPath();
+      ctx.roundRect(x, tile.y, LANE_W - 12, TILE_H, 9);
+      ctx.fill();
+      ctx.fillStyle = '#ffffff20';
+      ctx.fillRect(x + 8, tile.y + 8, LANE_W - 28, 4);
+    }
+    // Bottom target line.
+    ctx.fillStyle = '#a78bfa';
+    ctx.fillRect(0, H - 4, W, 4);
+  }
+
+  // SOUND: use a tiny synthesized note instead of an external audio file.
+  function playNote(lane) {
+    if (!soundOn) return;
+    try {
+      audioCtx ||= new (window.AudioContext || window.webkitAudioContext)();
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      const osc = audioCtx.createOscillator();
+      const gain = audioCtx.createGain();
+      osc.type = 'sine';
+      osc.frequency.value = [261.63, 293.66, 329.63, 392][lane];
+      gain.gain.setValueAtTime(0.08, audioCtx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 0.22);
+      osc.connect(gain); gain.connect(audioCtx.destination);
+      osc.start(); osc.stop(audioCtx.currentTime + 0.23);
+    } catch (e) { /* Sound may be unavailable; gameplay still works. */ }
+  }
+
+  function updateHud() {
+    scoreEl.textContent = score;
+    speedEl.textContent = (1 + Math.floor(score / 8) * 0.2).toFixed(1) + '×';
+  }
+
+  function startGame() {
+    tiles = []; score = 0; melodyIndex = 0; spawnTimer = 0; spawnEvery = 850;
+    running = true; gameOver = false; lastTime = 0;
+    updateHud();
+    overlay.classList.add('hidden');
+    spawnTile();
+    requestAnimationFrame(loop);
+  }
+
+  function endGame(message) {
+    running = false; gameOver = true;
+    overlayTitle.textContent = 'Game over!';
+    overlayText.textContent = `${message} Final score: ${score}. Try again and beat your best!`;
+    startBtn.textContent = 'Play again';
+    overlay.classList.remove('hidden');
+  }
+
+  // INPUT HANDLING: click/tap a lane, or use keys 1–4.
+  function hitLane(lane) {
+    if (!running) return;
+    const candidates = tiles.filter(t => t.lane === lane && !t.hit);
+    // The lowest tile in this lane is the next one the player should tap.
+    const target = candidates.reduce((lowest, t) => !lowest || t.y > lowest.y ? t : lowest, null);
+    if (!target) {
+      endGame('That lane had no tile.');
+      return;
+    }
+    target.hit = true;
+    score++;
+    flashLane = lane; flashUntil = performance.now() + 120;
+    playNote(lane);
+    if (score > best) {
+      best = score;
+      bestEl.textContent = best;
+      try { localStorage.setItem('pianoTilesBest', best); } catch (e) {}
+    }
+    spawnEvery = Math.max(330, 850 - score * 14);
+    updateHud();
+  }
+
+  function handlePointer(event) {
+    const rect = canvas.getBoundingClientRect();
+    const x = (event.clientX - rect.left) * (W / rect.width);
+    hitLane(Math.max(0, Math.min(LANES - 1, Math.floor(x / LANE_W))));
+  }
+  canvas.addEventListener('pointerdown', handlePointer);
+  window.addEventListener('keydown', event => {
+    // Keyboard controls: A/S/D/F map to the four lanes.
+    // Number keys 1–4 are also supported as an alternative.
+    const key = event.key.toLowerCase();
+    const laneKeys = { a: 0, s: 1, d: 2, f: 3 };
+    if (Object.prototype.hasOwnProperty.call(laneKeys, key)) {
+      event.preventDefault();
+      hitLane(laneKeys[key]);
+    } else if (['1','2','3','4'].includes(key)) {
+      hitLane(Number(key) - 1);
+    }
+    if (event.code === 'Space' && running) {
+      event.preventDefault(); running = false;
+      overlayTitle.textContent = 'Paused';
+      overlayText.textContent = 'Take a breath, then continue your run.';
+      startBtn.textContent = 'Resume';
+      overlay.classList.remove('hidden');
+    } else if (event.code === 'Space' && !running && !gameOver && !overlay.classList.contains('hidden')) {
+      startGame();
+    }
+  });
+  startBtn.addEventListener('click', () => {
+    if (running) return;
+    startBtn.textContent = 'Start game';
+    startGame();
+  });
+  document.getElementById('restartBtn').addEventListener('click', startGame);
+  soundBtn.addEventListener('click', () => {
+    soundOn = !soundOn;
+    soundBtn.textContent = soundOn ? '♫ Sound: On' : '♫ Sound: Off';
+  });
+
+  // GAME LOOP: update positions, check misses, draw the current frame, repeat.
+  function loop(timestamp) {
+    if (!running) return;
+    const delta = lastTime ? Math.min(timestamp - lastTime, 40) : 16;
+    lastTime = timestamp;
+    const speed = 0.18 + Math.floor(score / 8) * 0.035; // pixels per millisecond
+    spawnTimer += delta;
+    if (spawnTimer >= spawnEvery) {
+      spawnTile();
+      spawnTimer = 0;
+    }
+    for (const tile of tiles) {
+      if (!tile.hit) tile.y += speed * delta;
+      // MISS / GAME OVER: a tile that reaches the bottom was not tapped in time.
+      if (!tile.hit && tile.y + TILE_H >= H) {
+        draw(timestamp);
+        endGame('A tile reached the bottom.');
+        return;
+      }
+    }
+    tiles = tiles.filter(tile => !tile.hit && tile.y < H + TILE_H);
+    draw(timestamp);
+    requestAnimationFrame(loop);
+  }
+
+  draw();
+})();
+</script>
+</body>
+</html></code> 
+</p>
+</section> 
+
+<section>
   <h2>What I Learned:</h2>
   <p>This project helped me understand how JavaScript can control both gameplay and sound. I learned that changing a small part of the code, such as how tiles are generated, can change the entire experience of a game. I also learned how programming can combine music, timing, and interaction to make a project more engaging.</p>
 </section> 
