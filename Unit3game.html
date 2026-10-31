@@ -88,13 +88,93 @@
 </section>
 
 <section>
-  <h2>Goal</h2>
+  <h2>Goal:</h2>
   <p>My goal was to advance my piano tiles game by making it playable off the computer. My goal was to create an Arduino circuit with 4 buttons where each button controls a row on the game.</p>
-  
+</section>
 
+<section>
+  <h2>Process:</h2>
+  <p>First, I attempted to watch a YouTube video: [![Watch the video](https://img.youtube.com/vi/ZsSJdGdLF-A/0.jpg)](https://www.youtube.com/watch?v=ZsSJdGdLF-A)</p>
+  <p>[add photo]</p>
+  <p>This wiring did not work so I asked ChatGPT: 
+  <p>Original Prompt: <code>Create a four-button Piano Tiles controller using an Arduino Uno, breadboard, and four push buttons, where each physical button connects to a different keyboard key (D, F, J, and K) through a Python program so I can play Piano Tiles in my web browser.</code></p></p>
+  <p>[add photo]</p>
+  <p>This wiring also did not work after multiple attempts.</p>
+  <p>I then tried to use circuito.io to figure out the circuit, but it once again did not work, with lots of trial and error.</p>
+  <p>Even though I didn't get the circuit to work, I still created code. I used Python to receive the information from the Arduino. I used the PySerial library to read the serial data and the Pynput library to simulate keyboard inputs.
+Each physical button was assigned a keyboard key:
+- Button 1 = D
+- Button 2 = F
+- Button 3 = J
+- Button 4 = K
+</p>
+  <p>Final Code: This code allows the Arduino to detect when one of the four buttons is pressed.
 
+```cpp
+const int buttons[] = {2, 3, 4, 5};
 
+void setup() {
+  Serial.begin(115200);
 
+  for (int i = 0; i < 4; i++) {
+    pinMode(buttons[i], INPUT_PULLUP);
+  }
+}
+void loop() {
+  for (int i = 0; i < 4; i++) {
+    if (digitalRead(buttons[i]) == LOW) {
+      Serial.print("1");
+    } else {
+      Serial.print("0");
+    }
+  }
+  Serial.println();
+  delay(5);
+}
+```
+</p>
+
+<p>This program receives the Arduino signals and converts them into keyboard inputs.
+
+```python
+import serial
+import time
+from pynput.keyboard import Controller
+
+PORT = "COM3"
+BAUD_RATE = 115200
+
+KEYS = ["d", "f", "j", "k"]
+
+keyboard = Controller()
+</p>
+</section>
+
+<section>
+  <h2>Challenges:</h2>
+  <p>During this project, the main challenge I faced was connecting the four buttons to the Arduino Uno. One challenge was making sure each button was connected to the correct digital pin and GND. Another challenge was getting the Arduino and Python program to communicate through serial communication. I also had to make sure each button sent the correct keyboard input (D, F, J, and K) so the Piano Tiles game could recognize it.
+</p>
+</section>
+
+<section>
+  <h2>Final Product</h2>
+  <p>My final product is a four-button Piano Tiles controller made using an Arduino Uno, a breadboard, four push buttons, and jumper wires. Each button represents a different lane in the game. When I press a physical button, the Arduino detects the signal and sends the information to my computer. The Python program then converts that signal into a keyboard input, allowing me to play Piano Tiles using my custom-built controller. But the controller still does not work. 
+</p>
+</section>
+
+<section>
+  <h2>What I learned:</h2>
+  <p>Throughout this project, I learned how hardware and software can work together to create something interactive. I learned how to connect push buttons to an Arduino and use digital pins. I also learned how serial communication sends information between the Arduino and the computer. Using Python helped me understand how programs can receive information and turn it into keyboard inputs. 
+</p>
+</section>
+
+<section>
+  <h2>Next Steps:</h2>
+  <p>1. Make the buttons more accessible and easier to press, maybe with a 3d printed design or using bigger buttons
+2. Add LED lights to show when each button is pressed.
+3. Improve the Python program so it works with different Piano Tiles games and keyboard controls.
+</p>
+</section>
 
 
 
