@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Soda Pop Tiles</title>
+<style>
+  :root {
+    --accent: #4a6fa5;
+    --accent-dark: #334e75;
+    --bg: #f5f7fa;
+    --card: #ffffff;
+    --text: #2d3436;
+  }
+  * { box-sizing: border-box; }
+  body {
+    font-family: Georgia, 'Times New Roman', serif;
+    background: var(--bg);
+    color: var(--text);
+    margin: 0;
+    padding: 0;
+    line-height: 1.7;
+  }
+  header {
+    background: linear-gradient(135deg, var(--accent-dark), var(--accent));
+    color: #fff;
+    text-align: center;
+    padding: 3rem 1rem 2.5rem;
+  }
+  header h1 {
+    margin: 0;
+    font-size: 2.2rem;
+    letter-spacing: 1px;
+  }
+  header p {
+    margin: 0.5rem 0 0;
+    font-style: italic;
+    opacity: 0.9;
+  }
+  main {
+    max-width: 800px;
+    margin: -1.5rem auto 3rem;
+    padding: 0 1rem;
+  }
+  section {
+    background: var(--card);
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 1.5rem 2rem;
+    margin-bottom: 1.5rem;
+  }
+  h2 {
+    color: var(--accent-dark);
+    border-bottom: 2px solid var(--accent);
+    padding-bottom: 0.4rem;
+    margin-top: 0;
+    font-size: 1.4rem;
+  }
+  code {
+    background: #eef1f6;
+    color: #c0392b;
+    padding: 0.15em 0.4em;
+    border-radius: 4px;
+    font-family: 'Courier New', monospace;
+    font-size: 0.95em;
+  }
+  em { color: var(--accent-dark); }
+  footer {
+    text-align: center;
+    color: #888;
+    font-size: 0.9rem;
+    padding-bottom: 2rem;
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1> Unit 4: 3D Scanner</h1>
+  <p>Stepper Motor and IR Sensor</p>
+</header>
+<main>
+
+<section>
+  <h2>Process and Challenges</h2>
+  <p>First, Evan and I started off by attempting to wire the NEMA 17 stepper motor using this YouTube video:
+    <iframe width="560" height="315" src="https://www.youtube.com/embed/wcLeXXATCR4?si=8eheGaC8AClUrWIk" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+  <p>But we were having trouble with the multimeter getting the correct voltage.</p>
+  <p>To fix the problem we had to take out all the wires and use a lot of trial and error until we figured out that there may have been something wrong with the multimeter</p>
+  <p> After figuring out the voltage, we used this code: 
+<code>#include <math.h>
+
+const int irPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  // Take 10 readings to reduce noise
+  long total = 0;
+
+  for (int i = 0; i < 10; i++) {
+    total += analogRead(irPin);
+    delay(5);
+  }
+
+  // Calculate average reading
+  float sensorValue = total / 10.0;
+
+  // Convert reading into voltage
+  float voltage = sensorValue * (5.0 / 1023.0);
+
+  // Calculate distance in centimeters
+  float distance = 29.988 * pow(voltage, -1.173);
+
+  // Check measuring range
+  if (distance >= 10 && distance <= 80) {
+
+    // Display distance
+    Serial.print("Distance_cm:");
+    Serial.println(distance);
+
+  } else {
+    Serial.println("Out of range");
+  }
+
+  delay(100);
+}
+</code></p>
+<p>For the IR Scanner, we used Colin’s journal entry from last year to figure out the wiring.
+We had to strip the wires of the IR scanner because they would not go into the Arduino, but the wires kept falling out of the holes, so we stripped them even more, but this problem still continued. So we decided to use Male-to-Female jumper wires by inserting the open wire into the female side and securing it with electrical tape and putting the male side directly into the arduino.</p>
+<p>Wiring: Black - GND Red - 5V White - A0</p>
+<p>We then asked ChatGPT: can you make the code calculate the distance for arduino to connect to an IR distance sensor <code>#include <math.h>
+<p>With this code it kept giving me an error message: Error: programmer is not responding
+Warning: attempt 1 of 10: not in sync: resp=0x00</p>
+<p>But I figured out that the Arduino IDE app was connecting to the wrong port, but anther problem that occurred was the scanner kept glitching and not detecting any object and it was also not syncing with the Serial Plotter to create the graph so I asked ChatGPT to make me a new code with these qualities 
+</p>
+
+const int irPin = A0;
+
+void setup() {
+  Serial.begin(9600);
+}
+
+void loop() {
+
+  // Average 10 readings
+  long total = 0;
+
+  for (int i = 0; i < 10; i++) {
+    total += analogRead(irPin);
+    delay(5);
+  }
+
+  float sensorValue = total / 10.0;
+
+  // Convert to voltage
+  float voltage = sensorValue * (5.0 / 1023.0);
+
+  // Calculate distance
+  float distance = 29.988 * pow(voltage, -1.173);
+
+  // Only send numbers to the graph
+  if (voltage > 0 && distance >= 10 && distance <= 80) {
+    Serial.println(distance);
+  } 
+  else {
+    Serial.println(0);
+  }
+
+  delay(100);
+}
+</code></p>
+<p>Then we used the Serial Plotter to create a graph of the Voltage vs. Distance
+</p>
+</section>
+
+<section>
+  <h2>Reflection</h2>
+  <p>Throughout this project, Evan and I learned how to wire and troubleshoot an Arduino, stepper motor, and IR distance sensor. Although we faced challenges with the multimeter, loose wires, and Arduino connection errors, we solved them through trial and error. We also learned how to use code and the Serial Plotter to measure and graph voltage versus distance. This helped us build a foundation for creating our 3D scanner.</p>
+</section>
+
+<section>
+  <h2>Next Steps</h2>
+  <p>Our next step is to combine the stepper motor and IR sensor. The motor will rotate the platform while the IR sensor measures the distance of the object at different angles. We will collect these measurements and use them to generate a 3D model of the scanned object.</p>
+</section>
+
+<sections>
+  <img src="IMG_5377.jpg" alt="Project Screenshot" width="500">
+</sections>
